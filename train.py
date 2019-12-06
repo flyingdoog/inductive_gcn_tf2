@@ -3,7 +3,7 @@ import  tensorflow as tf
 from    tensorflow.keras import optimizers
 import numpy as np
 
-seed = 123
+seed = 1234
 np.random.seed(seed)
 tf.random.set_seed(seed)
 
@@ -62,16 +62,16 @@ def main():
 
         if whole_batch:
             with tf.GradientTape() as tape:
-                loss, acc = model(train, training=True)
-            grads = tape.gradient(loss, model.trainable_variables)
+                train_loss, train_acc = model(train, training=True)
+            grads = tape.gradient(train_loss, model.trainable_variables)
             optimizer.apply_gradients(zip(grads, model.trainable_variables))
         else:
             while not dl.train_end():
                 batch = dl.get_train_batch(batch_size=params['train_batch_size'])
                 with tf.GradientTape() as tape:
-                    loss, acc = model(batch, training=True)
+                    train_loss, train_acc = model(batch, training=True)
 
-                grads = tape.gradient(loss, model.trainable_variables)
+                grads = tape.gradient(train_loss, model.trainable_variables)
                 optimizer.apply_gradients(zip(grads, model.trainable_variables))
 
         val_loss = 0
@@ -99,7 +99,7 @@ def main():
             break
 
         if epoch % 10 == 0:
-            print(epoch, float(loss), float(acc), '\tval:', float(val_acc))
+            print(epoch, float(train_loss), float(train_acc), '\tval:', float(val_acc))
 
     print('train done')
     model.load_weights(check_file)
