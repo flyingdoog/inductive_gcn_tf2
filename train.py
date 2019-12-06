@@ -37,9 +37,6 @@ def main():
     adj_mask[adj_mask > 0] = 1
 
     features = preprocess_features(features)  # [49216, 2], [49216], [2708, 1433]
-    print('features coordinates::', features[0].shape)
-    print('features data::', features[1].shape)
-    print('features shape::', features[2])
 
     # add a row
     fea = np.asarray(features)

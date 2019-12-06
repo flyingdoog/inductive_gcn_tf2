@@ -31,7 +31,7 @@ class GCN(keras.Model):
         self.layer2  = GraphConvolution(input_dim=params['hidden1'], # 16
                                             output_dim=self.output_dim, #params['hidden2'],
                                             num_features_nonzero=num_features_nonzero,
-                                            activation=tf.nn.relu,
+                                            activation=lambda x:x,
                                             dropout=args.dropout)
 
         self.dense_layers = []
@@ -83,8 +83,9 @@ class GCN(keras.Model):
 
         # # Weight decay loss
         loss = tf.zeros([])
-        for var in self.layers_[0].trainable_variables:
-            loss += params['weight_decay'] * tf.nn.l2_loss(var)
+        for layer in self.layers_:
+            for var in layer.trainable_variables:
+                loss += params['weight_decay'] * tf.nn.l2_loss(var)
 
         # Cross entropy error
         loss += softmax_cross_entropy(output, label)
